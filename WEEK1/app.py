@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 
 # Function to load data
-def load_data(file_path):
-    return pd.read_csv('trainingdata.csv')
+def load_data(uploaded_file):
+    return pd.read_csv(uploaded_file)
+
 
 # Function for Candidate Elimination Algorithm (CEA)
 def learn(concepts, target):
@@ -47,8 +48,10 @@ def main():
         st.write(data)
 
         # Extract features and target
-        features = data.drop(columns=['enjoySport'])
-        target = data['enjoySport']
+        # Extract features and target
+        target_column = 'enjoySport'  # Replace 'your_target_column_name' with the actual name of your target column
+        features = data.drop(columns=[target_column])
+        target = data[target_column]  # Use the correct target column
 
         # Run Candidate Elimination algorithm
         st.subheader('Running Candidate Elimination Algorithm...')

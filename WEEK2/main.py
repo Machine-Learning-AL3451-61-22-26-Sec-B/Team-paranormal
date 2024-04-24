@@ -1,133 +1,58 @@
 import streamlit as st
 import pandas as pd
-import math
-import copy
+import numpy as np
 
-st.title('Decision Tree Classifier')
+def generate_synthetic_data():
+    # Generate synthetic data
+    np.random.seed(42)
+    n_samples = 100
+    n_features = 4
+    X = np.random.randn(n_samples, n_features)
+    y = np.random.randint(0, 3, n_samples)  # Three classes
+    df = pd.DataFrame(X, columns=[f"Feature_{i+1}" for i in range(n_features)])
+    df['target'] = y
+    return df
 
-# Load dataset
-dataset = pd.read_csv('trainingdata.csv')
-X = dataset.iloc[:, 1:].values
+def train_model(df):
+    X = df.drop(columns=['target'])
+    y = df['target']
+    # Dummy model for demonstration
+    class_counts = y.value_counts().to_dict()
+    most_common_class = max(class_counts, key=class_counts.get)
+    return most_common_class
 
-attribute = ['sky','airTemp','humidity','wind','water','forecast']
+def evaluate_model(df, most_common_class):
+    y_true = df['target']
+    y_pred = np.full_like(y_true, most_common_class)
+    accuracy = np.mean(y_true == y_pred)
+    return accuracy, y_pred
 
-class Node(object):
-    def __init__(self):
-        self.value = None
-        self.decision = None
-        self.childs = None
+def main():
+    st.title("Dummy Classifier")
+    st.write("This app demonstrates a dummy classifier using synthetic data.")
 
-def findEntropy(data, rows):
-    yes = 0
-    no = 0
-    ans = -1
-    idx = len(data[0]) - 1
-    entropy = 0
-    for i in rows:
-        if data[i][idx] == 'Yes':
-            yes = yes + 1
-        else:
-            no = no + 1
+    # Generate synthetic data
+    df = generate_synthetic_data()
 
-    x = yes/(yes+no)
-    y = no/(yes+no)
-    if x != 0 and y != 0:
-        entropy = -1 * (x*math.log2(x) + y*math.log2(y))
-    if x == 1:
-        ans = 1
-    if y == 1:
-        ans = 0
-    return entropy, ans
+    # Display dataset
+    st.subheader("Synthetic Dataset")
+    st.write(df)
 
-def findMaxGain(data, rows, columns):
-    maxGain = 0
-    retidx = -1
-    entropy, ans = findEntropy(data, rows)
-    if entropy == 0:
-        return maxGain, retidx, ans
+    # Train model
+    most_common_class = train_model(df)
 
-    for j in columns:
-        mydict = {}
-        idx = j
-        for i in rows:
-            key = data[i][idx]
-            if key not in mydict:
-                mydict[key] = 1
-            else:
-                mydict[key] = mydict[key] + 1
-        gain = entropy
+    # Display most common class
+    st.subheader("Most Common Class")
+    st.write("The most common class in the dataset is:", most_common_class)
 
-        for key in mydict:
-            yes = 0
-            no = 0
-            for k in rows:
-                if data[k][j] == key:
-                    if data[k][-1] == 'Yes':
-                        yes = yes + 1
-                    else:
-                        no = no + 1
+    # Evaluate model
+    accuracy, y_pred = evaluate_model(df, most_common_class)
+    st.subheader("Model Evaluation")
+    st.write("Accuracy:", accuracy)
 
-            x = yes/(yes+no)
-            y = no/(yes+no)
-            if x != 0 and y != 0:
-                gain += (mydict[key] * (x*math.log2(x) + y*math.log2(y)))/14
+    # Display predicted values
+    st.subheader("Predicted Values")
+    st.write("Predicted values:", y_pred)
 
-        if gain > maxGain:
-            maxGain = gain
-            retidx = j
-
-    return maxGain, retidx, ans
-
-def buildTree(data, rows, columns):
-    maxGain, idx, ans = findMaxGain(X, rows, columns)
-    root = Node()
-    root.childs = []
-
-    if maxGain == 0:
-        if ans == 1:
-            root.value = 'Yes'
-        else:
-            root.value = 'No'
-        return root
-
-    root.value = attribute[idx]
-    mydict = {}
-    for i in rows:
-        key = data[i][idx]
-        if key not in mydict:
-            mydict[key] = 1
-        else:
-            mydict[key] += 1
-
-    newcolumns = copy.deepcopy(columns)
-    newcolumns.remove(idx)
-    for key in mydict:
-        newrows = []
-        for i in rows:
-            if data[i][idx] == key:
-                newrows.append(i)
-        temp = buildTree(data, newrows, newcolumns)
-        temp.decision = key
-        root.childs.append(temp)
-    return root
-
-def traverse(root):
-    st.write(f'Decision: {root.decision}, Attribute: {root.value}')
-    
-    n = len(root.childs)
-    if n > 0:
-        for i in range(0, n):
-            traverse(root.childs[i])
-
-# Streamlit UI
-st.sidebar.header('Decision Tree Classifier Parameters')
-st.sidebar.text('No parameters needed for this example.')
-
-st.write('Building Decision Tree...')
-rows = [i for i in range(0, len(X))]
-columns = [i for i in range(0, 4)]
-root = buildTree(X, rows, columns)
-root.decision = 'Start'
-
-st.write('Decision Tree:')
-traverse(root)
+if __name__ == "__main__":
+    main()

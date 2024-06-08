@@ -1,55 +1,68 @@
 import streamlit as st
 import numpy as np
 
-# Function to normalize data
-def normalize(data):
-    return data / np.amax(data, axis=0)
+# Neural Network class
+class Neural_Network(object):
+    def __init__(self):
+        # Parameters
+        self.inputSize = 2
+        self.outputSize = 1
+        self.hiddenSize = 3
+        # Weights
+        self.W1 = np.random.randn(self.inputSize, self.hiddenSize)
+        self.W2 = np.random.randn(self.hiddenSize, self.outputSize)
 
-# Function to define sigmoid activation
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    def forward(self, X):
+        # Forward propagation through our network
+        self.z = np.dot(X, self.W1)
+        self.z2 = self.sigmoid(self.z)
+        self.z3 = np.dot(self.z2, self.W2)
+        o = self.sigmoid(self.z3)
+        return o
 
-# Function to define gradient of sigmoid
-def sigmoid_grad(x):
-    return x * (1 - x)
+    def sigmoid(self, s):
+        return 1 / (1 + np.exp(-s))
+
+    def sigmoidPrime(self, s):
+        return s * (1 - s)
+
+    def backward(self, X, y, o):
+        # Backward propagate through the network
+        self.o_error = y - o
+        self.o_delta = self.o_error * self.sigmoidPrime(o)
+        self.z2_error = self.o_delta.dot(self.W2.T)
+        self.z2_delta = self.z2_error * self.sigmoidPrime(self.z2)
+        self.W1 += X.T.dot(self.z2_delta)
+        self.W2 += self.z2.T.dot(self.o_delta)
+
+    def train(self, X, y):
+        o = self.forward(X)
+        self.backward(X, y, o)
+
+# Initialize the neural network
+NN = Neural_Network()
 
 # Streamlit app
-def main():
-    st.title("Neural Network Prediction")
+st.title('22AIB TEAM PARANORMAL')
+st.title('Simple Neural Network with Streamlit')
 
-    # Input form for user to enter numbers
-    st.subheader("Enter Numbers")
-    number1 = st.number_input("Enter first number", value=2.0)
-    number2 = st.number_input("Enter second number", value=9.0)
-    number3 = st.number_input("Enter third number", value=1.0)
-    number4 = st.number_input("Enter fourth number", value=5.0)
-    number5 = st.number_input("Enter fifth number", value=3.0)
-    number6 = st.number_input("Enter sixth number", value=6.0)
+# Input data
+st.write('Input data (hours sleeping, hours studying):')
+X = np.array(([2, 9], [1, 5], [3, 6]), dtype=float)     
+y = np.array(([92], [86], [89]), dtype=float)           
 
-    if st.button("Predict"):
-        # Convert input data to numpy array and normalize
-        X = np.array([[number1, number2], [number3, number4], [number5, number6]])
-        X_normalized = normalize(X)
+# Scale units
+X = X / np.amax(X, axis=0)
+y = y / 100
 
-        # Neural network parameters
-        input_neurons = 2
-        hidden_neurons = 3
-        output_neurons = 1
+st.write(f"Input: \n{X}")
+st.write(f"Actual Output: \n{y}")
 
-        # Initialize weights and biases
-        wh = np.random.uniform(size=(input_neurons, hidden_neurons))    # 2x3
-        bh = np.random.uniform(size=(1, hidden_neurons))    # 1x3
-        wout = np.random.uniform(size=(hidden_neurons, output_neurons))    # 3x1
-        bout = np.random.uniform(size=(1, output_neurons))
-
-        # Feedforward
-        h_ip = np.dot(X_normalized, wh) + bh
-        h_act = sigmoid(h_ip)
-        o_ip = np.dot(h_act, wout) + bout
-        output = sigmoid(o_ip)
-
-        st.subheader("Prediction:")
-        st.write(output)
-
-if __name__ == "__main__":
-    main()
+# Train the network
+if st.button('Train the Neural Network'):
+    NN.train(X, y)
+    predicted_output = NN.forward(X)
+    loss = np.mean(np.square(y - predicted_output))
+    
+    st.write(f"Predicted Output: \n{predicted_output}")
+    st.write(f"Loss: \n{loss}")

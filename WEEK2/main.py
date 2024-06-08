@@ -3,22 +3,23 @@ import pandas as pd
 import numpy as np
 
 def train_model(df):
-    X = df.drop(columns=['Embarked'])
-    y = df['Embarked']
+    X = df.drop(columns=['enjoySport'])
+    y = df['enjoySport']
     # Dummy model for demonstration
     class_counts = y.value_counts().to_dict()
     most_common_class = max(class_counts, key=class_counts.get)
     return most_common_class
 
 def evaluate_model(df, most_common_class):
-    y_true = df['Embarked']
+    y_true = df['enjoySport']
     y_pred = np.full_like(y_true, most_common_class)
     accuracy = np.mean(y_true == y_pred)
     return accuracy, y_pred
 
 def main():
-    st.title("Dummy Classifier")
-    st.write("This app demonstrates a dummy classifier using your own data.")
+    st.title('22AIB TEAM PARANORMAL')
+    st.title("ID3 Classifier")
+    
 
     # Upload user data
     uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])

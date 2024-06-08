@@ -33,6 +33,7 @@ def learn(concepts, target):
 
 # Define Streamlit app
 def main():
+    st.title('22AIB TEAM PARANORMAL')
     st.title('Candidate Elimination Algorithm')
 
     # Sidebar - Upload CSV file

@@ -6,10 +6,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 
 # Title and description
+st.title("22AIB25 TEAM PARANORMAL")
 st.title("Iris Flower Prediction using K-Nearest Neighbors")
-st.write("""
-This application uses a K-Nearest Neighbors classifier to predict the species of an iris flower based on its features.
-""")
+
 
 # Load Iris dataset
 dataset = load_iris()

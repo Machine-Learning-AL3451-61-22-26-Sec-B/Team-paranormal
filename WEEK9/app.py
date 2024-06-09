@@ -38,10 +38,8 @@ def plot_lwr(tau):
     return plt
 
 # Streamlit app
+st.title("22AIB TEAM PARANORMAL")
 st.title("Local Weighted Regression Visualization")
-st.write("This app visualizes Local Weighted Regression on a sine function.")
-
-# Tau input
 tau = st.slider('Select tau value', 0.01, 1.0, 0.1)
 
 # Plot the LWR

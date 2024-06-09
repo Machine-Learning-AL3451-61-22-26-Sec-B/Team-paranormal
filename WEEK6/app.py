@@ -7,8 +7,8 @@ from pgmpy.estimators import MaximumLikelihoodEstimator
 from pgmpy.inference import VariableElimination
 
 # Title and introduction
-st.title("Bayesian Network for COVID-19 Symptom Classification")
-st.write("This app uses a Bayesian Network to classify COVID-19 symptoms based on the provided dataset.")
+st.title("22AIB TEAM PARANORMAL")
+st.header("Bayesian Network for COVID-19 Symptom Classification")
 
 # Create a synthetic dataset
 def create_synthetic_data():
@@ -50,6 +50,9 @@ for column in df.select_dtypes(include=np.number).columns:
     st.write(f"Histogram for {column}")
     fig, ax = plt.subplots()
     ax.hist(df[column].dropna(), bins=20)
+    ax.set_title(f"Histogram for {column}")
+    ax.set_xlabel(column)
+    ax.set_ylabel("Frequency")
     st.pyplot(fig)
 
 # Define the Bayesian Network structure
@@ -80,7 +83,7 @@ infer = VariableElimination(model)
 symptoms = ['Fever', 'cough', 'runnynose']
 evidence = {}
 for symptom in symptoms:
-    value = st.selectbox(f"Do you have {symptom}?", ('Yes', 'No', 'Not Sure'), key=symptom)
+    value = st.selectbox(f"Do you have {symptom}?", ('Not Sure', 'No', 'Yes'), key=symptom)
     if value == 'Yes':
         evidence[symptom] = 1
     elif value == 'No':

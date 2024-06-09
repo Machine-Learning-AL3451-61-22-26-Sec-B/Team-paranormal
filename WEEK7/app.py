@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import adjusted_rand_score
 
 # Title and introduction
+st.title("22AIB TEAM PARANORMAL")
 st.title("Clustering Comparison: EM vs KMeans")
-st.write("This app compares the clustering results between the Expectation-Maximization (EM) algorithm and the KMeans algorithm using the Iris dataset.")
 
 # Load the Iris dataset
 iris = load_iris()

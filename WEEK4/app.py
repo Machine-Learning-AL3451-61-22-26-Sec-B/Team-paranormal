@@ -6,10 +6,9 @@ from sklearn.metrics import accuracy_score
 import streamlit as st
 
 # Title and description
+st.title("22AIB TEAMPARANORMAL")
 st.title("Tennis Match Prediction Using Naive bayes")
-st.write("""
-This application uses a Naive Bayes classifier to predict whether a tennis match will be enjoyed based on the given weather conditions.
-""")
+
 
 # Upload CSV
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
